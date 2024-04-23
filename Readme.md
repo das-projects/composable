@@ -34,5 +34,29 @@ crate-name = "0.1.0"
 - Decisions taken: Which alternatives were discarded and why? Which tradeoffs were accepted and why? 
 - (Y)ADRs: tools for documentation
 - Missing handling of corner-cases. todo!()/unimplemented!(), Future optimization opportunities: Absence of an impl (like From)
+### Make misuse inexpressible
+- Newtypes (not aliases): Meters(u64) vs Miles(u64)
+- Typestates: Rocket <Ground> vs Rocket <Air> Maybe can be used for train vs inference
+- Two-phase Structs: TomConfig vs ResolvedConfig
+- Enums over Booleans
+- Enums for linked arguments: f(true, Some(_)) (+) f(false, None) should be f(enums, Option)
+### Follow idoms
+- Clippy is your friend
+- The Rust API Guidelines
+- Try to use Rust features instead of trying to re-interpret Python or C/C++
+### Minimize Hazards
+- Concrete types: prefer -> Impl Trait, avoid pub fields
+- args, return types, train impls, ...
+- impl From: prefer non-pub inherent methods!
+- cargo-semver-checks, cargo-public-api, cargo-vet are tools for automatic change detection, but are not perfect.
+### Make stagnation a recurrent choice
+- Have reminders when there are changes in dependencies.
+- Auto-merging bump PRs
+- Dependabot
+- Upstream changes (no forks!)
+- Wrap unstable dependencies.
+
+
+
 
 
