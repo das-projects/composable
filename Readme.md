@@ -25,7 +25,8 @@ crate-name = "0.1.0"
 - Sanitizers: detects problematic threading and memory access patterns
 - Embrace Chaos: turmoil/shuttle (async/sync chaos), quickcheck/proptest (value chaos), cargo-mutants (logic chaos)
 - Be exhaustive when possible: Loom (all possible and distinguishable concurrent executions), Kani (all possible and distinguishible inputs). Only possible for core primitives. 
-### Benchmarking
+### Benchmarking and Profiling
+- Use profilers to detect problem areas and prioritize experimentation. flamegraph, samply, counts, coz (causal profiling)
 - Benchmark tool: Criterion, Devin, Hyperfine, Bencher
 - Capture these in the benchmark: Pathological cases, micro and macro, under at, and over capacity, on all relevant targets, usefulness, throughput, memory usage, latency. 
 - Use statistical tests (some implmented in Criterion) for comparisons, and not standard pointwise comparisions. 
