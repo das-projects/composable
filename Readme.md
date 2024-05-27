@@ -8,9 +8,13 @@ A brief description of what your crate does.
 
 ## Features
 
-- Feature 1: Description of feature 1.
-- Feature 2: Description of feature 2.00
-- ...
+This project aims to develop composable abstractions for high-performance code generation within MLIR. The proposed abstractions and transformations offer both immediate and long-term benefits. Our approach involves breaking down generic computations into smaller tiles, utilizing their algebraic properties and structure. These computations can be fused and gradually reduced into loops over vector primitives, which can be retargeted. They apply to both immutable tensor values and in-memory buffers that may have side effects. These abstractions support storage formats, including dense, sparse, and quantized representations. An in-place bufferization pass ensures efficient memory usage by materializing programs in tensor form, even those transformed through tiling, fusion, and other processes. These practical benefits underscore the value and relevance of our proposed abstractions and transformations.
+
+Our approach preserves high-level, domain-specific information, preventing the premature loss of the computational structure. This enables transformations without the performance limitations of numerical libraries when a fused operation lacks a high-performance implementation. These transformations can lower operations to hardware instructions that implement coarse-grained vector operations or to numerical libraries like Eigen, serving as a fallback. This flexible and adaptable approach enhances compiler transformations and opens new possibilities for compiler-library co-design.
+
+Additionally, tiled operations focus on subsets of tensor values or memory buffers, leveraging the natural structure in tensor operations while remaining generic in tensor representation (values or side effects, vectors or scalars, dense or sparse) and decomposition methods (various tiling forms). This improves composability by allowing transformations to apply to individual or group operations rather than entire loops or control-flow graphs. It also simplifies complex transformations' expression and lowers sequences, facilitating autotuning.
+
+The intermediate representation remains executable at any intermediate transformation and lowering step, greatly simplifying debugging, testing, and performance evaluation, and blurring the lines between the programmer's and the compiler's responsibilities.
 
 ## Installation
 
