@@ -5,9 +5,83 @@ use melior::{
         r#type::FunctionType,
         *,
     },
-    utility::register_all_dialects,
-    Context,
+    pass,
+    utility::{register_all_dialects, register_all_llvm_translations},
+    Context, ExecutionEngine,
 };
+use std::time::Instant;
+
+fn load_all_dialects(context: &Context) {
+    let registry = DialectRegistry::new();
+    register_all_dialects(&registry);
+    context.append_dialect_registry(&registry);
+    context.load_all_available_dialects();
+}
+
+fn create_test_context() -> Context {
+    let context = Context::new();
+
+    context.attach_diagnostic_handler(|diagnostic| {
+        eprintln!("{}", diagnostic);
+        true
+    });
+
+    load_all_dialects(&context);
+    register_all_llvm_translations(&context);
+
+    context
+}
+
+fn invoke_packed() {
+    let context = create_test_context();
+
+    let mut module = Module::parse(
+        &context,
+        r#"
+        module {
+            func.func @add(%arg0 : i32) -> i32 attributes { llvm.emit_c_interface } {
+                %res = arith.addi %arg0, %arg0 : i32
+                return %res : i32
+            }
+        }
+        "#,
+    )
+    .unwrap();
+
+    let pass_manager = pass::PassManager::new(&context);
+    pass_manager.add_pass(pass::conversion::create_func_to_llvm());
+
+    pass_manager
+        .nested_under("func.func")
+        .add_pass(pass::conversion::create_arith_to_llvm());
+
+    assert_eq!(pass_manager.run(&mut module), Ok(()));
+
+    let engine = ExecutionEngine::new(&module, 2, &[], false);
+
+    let mut argument = 42;
+    let mut result = -1;
+
+    let now = Instant::now();
+    assert_eq!(
+        unsafe {
+            engine.invoke_packed(
+                "add",
+                &mut [
+                    &mut argument as *mut i32 as *mut (),
+                    &mut result as *mut i32 as *mut (),
+                ],
+            )
+        },
+        Ok(())
+    );
+    let elapsed = now.elapsed();
+
+    assert_eq!(result, 84);
+    assert_eq!(argument, 42);
+    println!("Generated MLIR:\n{}", module.as_operation());
+    println!("Result: {} calculated in time {:.2?}", result, elapsed);
+}
 
 fn main() {
     // We need a registry to hold all the dialects
@@ -40,6 +114,7 @@ fn main() {
     // control flow within the function.
     // These blocks each can have more operations.
     module.body().append_operation(func::func(
+        // The context
         &context,
         // accepts a StringAttribute which is the function name.
         StringAttribute::new(&context, "add"),
@@ -76,6 +151,8 @@ fn main() {
         location,
     ));
 
-    println!("Generated MLIR:\n{}", module.body());
+    // Verify the module, this will check if the module is well-formed.
     assert!(module.as_operation().verify());
+    println!("Generated MLIR:\n{}", module.as_operation());
+    invoke_packed();
 }
