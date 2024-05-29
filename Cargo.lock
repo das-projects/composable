@@ -227,6 +227,7 @@ name = "composable"
 version = "0.1.0"
 dependencies = [
  "melior",
+ "mlir-sys",
 ]
 
 [[package]]

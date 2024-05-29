@@ -7,3 +7,4 @@ edition = "2021"
 
 [dependencies]
 melior = "0.18.1"
+mlir-sys = "0.2.2"

@@ -19,7 +19,7 @@ The intermediate representation remains executable at any intermediate transform
 ## Installation
 
 Add the following line to your `Cargo.toml` file:
-crate-name = "0.1.0"
+composable = "0.1.0"
 
 ## Notes for CI
 
