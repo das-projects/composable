@@ -1,2 +1,4 @@
 /target
 /llvm-project
+/.venv
+/.trunck

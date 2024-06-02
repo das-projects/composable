@@ -1,5 +1,3 @@
-use std::borrow::Borrow;
-
 use melior::{
     dialect::{arith, func, DialectRegistry},
     ir::{
@@ -137,7 +135,7 @@ struct MLIRType<'a> {
     index_type: Type<'a>,
 }
 
-impl <'a>MLIRType<'a> {
+impl<'a> MLIRType<'a> {
     fn new(context: &Context) -> MLIRType {
         let index_type: Type = Type::index(context);
         MLIRType { index_type }
